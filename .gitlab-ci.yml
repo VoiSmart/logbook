@@ -15,4 +15,4 @@ test:
   variables:
     MIX_ENV: "test"
   script:
-    - mix format --check-formatted --dry-run; mix do test;
+    - mix format --check-formatted --dry-run; mix coveralls;
