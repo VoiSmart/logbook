@@ -69,6 +69,7 @@ defmodule Logbook.Backends.LogfmtTest do
 
     log_entry = read_log()
     assert log_entry =~ "tags=foo,bar"
+    refute log_entry =~ "tags=\"[:foo, :bar"
   end
 
   test "can configure metadata_filter" do
