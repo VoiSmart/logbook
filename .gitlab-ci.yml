@@ -1,0 +1,18 @@
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - deps/
+  - _build/
+
+test:
+  stage: test
+  image: mbranca/docker-elixir:gitlab
+  before_script:
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get --only test
+  - mix deps.compile --only test
+  variables:
+    MIX_ENV: "test"
+  script:
+    - mix format --check-formatted --dry-run; mix do test;
