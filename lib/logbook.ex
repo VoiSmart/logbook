@@ -2,8 +2,6 @@ defmodule Logbook do
   @moduledoc false
   alias Logbook.LogTags
 
-  require Logger
-
   @spec set_level(atom, :info | :warn | :error | :debug | :none) :: :ok
   def set_level(tag, level) when is_atom(tag) do
     LogTags.set_level([tag], level)
@@ -41,20 +39,12 @@ defmodule Logbook do
   end
 
   defp do_log(level, tag_or_tags, chardata_or_fun, metadata, caller) do
+    logger = macro_logger(level)
     {module, tags, metadata} = macro_preprocess(tag_or_tags, metadata, caller)
 
     quote do
-      require Logger
-
       level = unquote(level)
-
-      logger =
-        case level do
-          :info -> &Logger.info/2
-          :warn -> &Logger.warn/2
-          :error -> &Logger.error/2
-          :debug -> &Logger.debug/2
-        end
+      logger = unquote(logger)
 
       should_log =
         LogTags.enabled?(unquote(tags), level) || LogTags.module_enabled?(unquote(module), level)
@@ -66,6 +56,38 @@ defmodule Logbook do
         true ->
           logger.(unquote(chardata_or_fun), unquote(metadata))
       end
+    end
+  end
+
+  defp macro_logger(:debug) do
+    quote do
+      require Logger
+
+      &Logger.debug/2
+    end
+  end
+
+  defp macro_logger(:info) do
+    quote do
+      require Logger
+
+      &Logger.info/2
+    end
+  end
+
+  defp macro_logger(:warn) do
+    quote do
+      require Logger
+
+      &Logger.warn/2
+    end
+  end
+
+  defp macro_logger(:error) do
+    quote do
+      require Logger
+
+      &Logger.error/2
     end
   end
 
