@@ -1,10 +1,11 @@
 defmodule Logbook.MixProject do
+  @moduledoc false
   use Mix.Project
 
   def project do
     [
       app: :logbook,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.7",
       elixirc_options: [warnings_as_errors: true],
       start_permanent: Mix.env() == :prod,
