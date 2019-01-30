@@ -54,7 +54,7 @@ defmodule Logbook do
           :ok
 
         true ->
-          logger.(unquote(chardata_or_fun), unquote(metadata))
+          logger.(unquote(chardata_or_fun), unquote(Macro.escape(metadata)))
       end
     end
   end
@@ -103,7 +103,7 @@ defmodule Logbook do
     macro_tags_must_be_atoms(tags)
 
     # enrich metadata
-    metadata = Keyword.put(metadata, :tags, tags)
+    metadata = Keyword.put(metadata, :tags, %Logbook.Tags{tags: tags})
 
     {module, tags, metadata}
   end

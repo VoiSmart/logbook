@@ -6,6 +6,8 @@ defmodule Logbook.Backends.LogfmtTest do
 
   require Logger
 
+  alias Logbook.Tags
+
   @backend {Logbook.Backends.Logfmt, :test}
 
   setup_all do
@@ -65,7 +67,7 @@ defmodule Logbook.Backends.LogfmtTest do
 
   test "a log message with tags into metadata" do
     # Logbook puts tags into logger metadata :tags key
-    capture_log(fn -> Logger.debug("oh my log", tags: [:foo, :bar]) end)
+    capture_log(fn -> Logger.debug("oh my log", tags: %Tags{tags: [:foo, :bar]}) end)
 
     log_entry = read_log()
     assert log_entry =~ "tags=foo,bar"

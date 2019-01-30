@@ -232,12 +232,7 @@ defmodule Logbook.Backends.Logfmt do
   end
 
   defp get_tags(md) do
-    md
-    |> Keyword.get(:tags, [])
-    |> case do
-      [] -> "default"
-      tags -> Enum.join(tags, ",")
-    end
+    Keyword.get(md, :tags, %Logbook.Tags{tags: [:default]})
   end
 
   defp highlight(msg), do: [IO.ANSI.bright(), msg | IO.ANSI.normal()]

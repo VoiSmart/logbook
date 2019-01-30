@@ -3,6 +3,12 @@ defprotocol Logbook.Backends.Logfmt.Value do
   def encode(value)
 end
 
+defimpl Logbook.Backends.Logfmt.Value, for: Logbook.Tags do
+  def encode(t) do
+    Logbook.Tags.to_string(t)
+  end
+end
+
 defimpl Logbook.Backends.Logfmt.Value, for: Atom do
   def encode(atom) do
     case Atom.to_string(atom) do
