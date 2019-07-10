@@ -40,11 +40,14 @@ defmodule Logbook do
 
   defp do_log(level, tag_or_tags, chardata_or_fun, metadata, caller) do
     logger = macro_logger(level)
-    {module, tags, metadata} = macro_preprocess(tag_or_tags, metadata, caller)
+    {module, tags} = macro_preprocess(tag_or_tags, caller)
 
     quote do
       level = unquote(level)
       logger = unquote(logger)
+
+      # enrich metadata
+      md = Keyword.put(unquote(metadata), :tags, %Logbook.Tags{tags: unquote(tags)})
 
       should_log =
         LogTags.enabled?(unquote(tags), level) || LogTags.module_enabled?(unquote(module), level)
@@ -54,7 +57,7 @@ defmodule Logbook do
           :ok
 
         true ->
-          logger.(unquote(chardata_or_fun), unquote(Macro.escape(metadata)))
+          logger.(unquote(chardata_or_fun), md)
       end
     end
   end
@@ -91,7 +94,7 @@ defmodule Logbook do
     end
   end
 
-  defp macro_preprocess(tag_or_tags, metadata, caller) do
+  defp macro_preprocess(tag_or_tags, caller) do
     %{module: module, function: _fun, file: _file, line: _line} = caller
 
     tags =
@@ -102,10 +105,7 @@ defmodule Logbook do
 
     macro_tags_must_be_atoms(tags)
 
-    # enrich metadata
-    metadata = Keyword.put(metadata, :tags, %Logbook.Tags{tags: tags})
-
-    {module, tags, metadata}
+    {module, tags}
   end
 
   defp macro_tags_must_be_atoms(tags) do

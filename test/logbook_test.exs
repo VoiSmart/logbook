@@ -123,6 +123,47 @@ defmodule LogbookTest do
       assert capture_log(fn -> Logbook.debug(:dbgcat, "foo") end) =~ "foo"
     end
 
+    test "can set metadata" do
+      :ok = Logbook.set_level(:dbgcat, :debug)
+
+      assert capture_log([format: "$metadata", metadata: :all], fn ->
+               my_meta_value = :bar
+               Logbook.debug(:dbgcat, "foo", foo_md: my_meta_value)
+             end) =~ "foo_md=bar"
+    end
+
+    test "adds tag as metadata" do
+      :ok = Logbook.set_level(:dbgcat, :debug)
+
+      assert capture_log([format: "$metadata", metadata: :all], fn ->
+               my_meta_value = :bar
+               Logbook.debug(:dbgcat, "foo", foo_md: my_meta_value)
+             end) =~ "tags=dbgcat"
+    end
+
+    test "adds multiple tags as metadata" do
+      :ok = Logbook.set_level(:dbgcat, :debug)
+
+      assert capture_log([format: "$metadata", metadata: :all], fn ->
+               my_meta_value = :bar
+               Logbook.debug([:dbgcat, :anothercat], "foo", foo_md: my_meta_value)
+             end) =~ "tags=dbgcat,anothercat"
+    end
+
+    test "adds multiple tags and custom data as metadata" do
+      :ok = Logbook.set_level(:dbgcat, :debug)
+
+      res =
+        capture_log([format: "$metadata", metadata: :all], fn ->
+          my_meta_value = :bar
+          Logbook.debug([:dbgcat, :anothercat], "foo", foo_md: my_meta_value, bar: :baz)
+        end)
+
+      assert res =~ "tags=dbgcat,anothercat"
+      assert res =~ "foo_md=bar"
+      assert res =~ "bar=baz"
+    end
+
     test "log level lower than configured" do
       :ok = Logbook.set_level(:dbgcat, :error)
 
