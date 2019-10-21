@@ -22,9 +22,12 @@ defmodule Logbook.Backends.Logfmt.Encoder do
 
   @spec encode_value(value :: term) :: String.t()
   defp encode_value(value) do
-    str = Value.encode(value)
+    str =
+      value
+      |> Value.encode()
+      |> String.replace("\"", "\\\"")
 
-    if String.match?(str, ~r/\s/) or String.contains?(str, "=") or String.contains?(str, "\"") do
+    if String.match?(str, ~r/\s/) or String.contains?(str, "=") do
       "\"#{str}\""
     else
       str
