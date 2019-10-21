@@ -12,7 +12,7 @@ defmodule Logbook.Backends.Logfmt do
   @behaviour :gen_event
 
   @type path :: String.t()
-  @type use_colors :: bool()
+  @type use_colors :: boolean()
   @type file :: :file.io_device()
   @type inode :: File.Stat.t()
   @type level :: Logger.level()
