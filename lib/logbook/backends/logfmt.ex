@@ -12,6 +12,7 @@ defmodule Logbook.Backends.Logfmt do
   @behaviour :gen_event
 
   @type path :: String.t()
+  @type use_colors :: bool()
   @type file :: :file.io_device()
   @type inode :: File.Stat.t()
   @type level :: Logger.level()
@@ -21,6 +22,7 @@ defmodule Logbook.Backends.Logfmt do
 
   defstruct name: nil,
             path: nil,
+            use_colors: true,
             io_device: nil,
             inode: nil,
             level: nil,
@@ -127,6 +129,7 @@ defmodule Logbook.Backends.Logfmt do
 
     level = Keyword.get(opts, :level)
     path = Keyword.get(opts, :path)
+    use_colors = Keyword.get(opts, :use_colors, Map.get(%__MODULE__{}, :use_colors))
     metadata = Keyword.get(opts, :metadata, [])
     metadata_filter = Keyword.get(opts, :metadata_filter)
 
@@ -134,6 +137,7 @@ defmodule Logbook.Backends.Logfmt do
       state
       | name: name,
         path: path,
+        use_colors: use_colors,
         level: level,
         metadata: metadata,
         metadata_filter: metadata_filter
@@ -200,7 +204,7 @@ defmodule Logbook.Backends.Logfmt do
     end
   end
 
-  defp format_entry(level, msg, ts, md, _state) do
+  defp format_entry(level, msg, ts, md, %{use_colors: use_colors}) do
     alias Logger.Formatter
 
     {date, time} = ts
@@ -210,7 +214,7 @@ defmodule Logbook.Backends.Logfmt do
         date: date |> Formatter.format_date(),
         time: time |> Formatter.format_time(),
         level: level,
-        msg: msg |> Formatter.prune() |> highlight(),
+        msg: msg |> Formatter.prune() |> highlight(use_colors),
         tags: md |> get_tags(),
         pid: md |> Keyword.get(:pid),
         module: md |> Keyword.get(:module),
@@ -223,7 +227,7 @@ defmodule Logbook.Backends.Logfmt do
       |> Enum.concat(md)
       |> Enum.uniq_by(fn {k, _v} -> k end)
 
-    colorize(Encoder.encode(log_entry) <> "\n", level)
+    colorize(Encoder.encode(log_entry) <> "\n", level, use_colors)
   end
 
   defp hostname do
@@ -235,12 +239,16 @@ defmodule Logbook.Backends.Logfmt do
     Keyword.get(md, :tags, %Logbook.Tags{tags: [:default]})
   end
 
-  defp highlight(msg), do: [IO.ANSI.bright(), msg | IO.ANSI.normal()]
+  defp highlight(msg, true), do: [IO.ANSI.bright(), msg | IO.ANSI.normal()]
 
-  defp colorize(msg, level) do
+  defp highlight(msg, false), do: msg
+
+  defp colorize(msg, level, true) do
     color = get_color(level)
     [IO.ANSI.format_fragment(color, true), msg | IO.ANSI.reset()]
   end
+
+  defp colorize(msg, _level, false), do: msg
 
   defp get_color(:debug), do: :cyan
   defp get_color(:info), do: :normal

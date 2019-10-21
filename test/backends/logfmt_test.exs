@@ -29,7 +29,8 @@ defmodule Logbook.Backends.LogfmtTest do
     configure(
       path: "test/logs/test.log",
       level: :debug,
-      metadata_filter: nil
+      metadata_filter: nil,
+      use_colors: true
     )
 
     on_exit(fn ->
@@ -72,6 +73,21 @@ defmodule Logbook.Backends.LogfmtTest do
     log_entry = read_log()
     assert log_entry =~ "tags=foo,bar"
     refute log_entry =~ "tags=\"[:foo, :bar"
+  end
+
+  test "can log without colors" do
+    configure(use_colors: false)
+
+    capture_log(fn -> Logger.debug("oh my log") end)
+    log_entry = read_log()
+    refute log_entry =~ ~r/^\e/
+  end
+
+  test "logs with colors by default" do
+    capture_log(fn -> Logger.debug("oh my log") end)
+
+    log_entry = read_log()
+    assert log_entry =~ ~r/^\e/
   end
 
   test "can configure metadata_filter" do
