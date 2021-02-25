@@ -1,15 +1,15 @@
-dist: trusty
+dist: focal
 
 language: elixir
 
 matrix:
   include:
     - elixir: 1.9.4
-      otp_release: 22
+      otp_release: 22.3
     - elixir: 1.10.4
-      otp_release: 22
+      otp_release: 23.1.2
     - elixir: 1.11.3
-      otp_release: 22
+      otp_release: 23.1.2
 
 cache:
   directories:
