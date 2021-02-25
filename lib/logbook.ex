@@ -57,9 +57,26 @@ defmodule Logbook do
           :ok
 
         true ->
-          logger.(unquote(chardata_or_fun), md)
+          logger.(unquote(chardata_or_fun), Logbook.maybe_convert_md(md))
       end
     end
+  end
+
+  # remove this when supporting only elixir 1.11.x
+  # see: https://github.com/elixir-lang/elixir/commit/089c470e1304f7e0715f1d9b7abeb8307d1932d1
+  if System.version() in ["1.10.2", "1.10.3", "1.10.4"] do
+    @doc false
+    def maybe_convert_md(md) do
+      encoded_tags =
+        md
+        |> Keyword.fetch!(:tags)
+        |> to_string()
+
+      Keyword.put(md, :tags, encoded_tags)
+    end
+  else
+    @doc false
+    def maybe_convert_md(md), do: md
   end
 
   defp macro_logger(:debug) do
