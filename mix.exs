@@ -30,10 +30,10 @@ defmodule Logbook.MixProject do
   defp deps do
     [
       # development stuff
-      {:stream_data, "~> 0.4", only: :test},
-      {:credo, "~> 1.0", only: [:dev, :test]},
-      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:stream_data, "~> 0.5", only: :test},
+      {:credo, "~> 1.5", only: [:dev, :test]},
+      {:dialyxir, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.14", only: :test}
     ]
   end
 end
