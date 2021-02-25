@@ -227,7 +227,7 @@ defmodule Logbook.Backends.Logfmt do
       |> Enum.concat(md)
       |> Enum.uniq_by(fn {k, _v} -> k end)
 
-    colorize(Encoder.encode(log_entry) <> "\n", level, use_colors)
+    [colorize(Encoder.encode(log_entry), level, use_colors) | "\n"]
   end
 
   defp hostname do

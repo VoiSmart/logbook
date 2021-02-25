@@ -90,6 +90,13 @@ defmodule Logbook.Backends.LogfmtTest do
     assert log_entry =~ ~r/^\e/
   end
 
+  test "color is reset before log entry new line" do
+    capture_log(fn -> Logger.debug("oh my log") end)
+
+    log_entry = read_log()
+    assert log_entry =~ ~r/\e\[0m\n$/
+  end
+
   test "can configure metadata_filter" do
     configure(metadata_filter: [md_key: true])
     capture_log(fn -> Logger.debug("shouldn't", md_key: false) end)
