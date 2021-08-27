@@ -48,10 +48,10 @@ defmodule LogbookTest do
 
     :ok = Logbook.set_level(:somefun, :warning)
     assert capture_log(fn -> Logbook.warn(:somefun, fun) end) =~ "foo"
+    assert_receive(:hello)
 
     :ok = Logbook.set_level(:somefun, :warn)
     assert capture_log(fn -> Logbook.warning(:somefun, fun) end) =~ "foo"
-
     assert_receive(:hello)
   end
 
@@ -133,6 +133,23 @@ defmodule LogbookTest do
     refute capture_log(fn -> Logbook.warn(:cat2, "foo") end) =~ "foo"
     refute capture_log(fn -> Logbook.warning(:cat2, "foo") end) =~ "foo"
     refute capture_log(fn -> Logbook.debug(:cat2, "foo") end) =~ "foo"
+  end
+
+  test "has correct module/fun/arity metadata in log entry" do
+    defmodule TestLogbookMfa do
+      @moduledoc false
+      require Logbook
+
+      def hello do
+        Logbook.info(:mfa, "hello")
+      end
+    end
+
+    :ok = Logbook.set_level(:mfa, :debug)
+    log = capture_log([format: "$metadata", metadata: :all], &TestLogbookMfa.hello/0)
+    assert log =~ "mfa=LogbookTest.TestLogbookMfa.hello/0"
+    assert log =~ "module=LogbookTest.TestLogbookMfa"
+    assert log =~ "logbook/test/logbook_test.exs"
   end
 
   describe "set_level/2" do

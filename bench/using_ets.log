@@ -1,0 +1,45 @@
+Operating System: Linux
+CPU Information: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz
+Number of Available Cores: 12
+Available memory: 15.28 GB
+Elixir 1.12.2
+Erlang 23.3.4.4
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 10 s
+memory time: 2 s
+parallel: 2
+inputs: none specified
+Estimated total run time: 56 s
+
+Benchmarking logbook_disabled...
+Benchmarking logbook_enabled...
+Benchmarking logger_disabled...
+Benchmarking logger_enabled...
+
+Name                       ips        average  deviation         median         99th %
+logger_disabled         5.88 M       0.170 μs ±16628.12%       0.127 μs        0.21 μs
+logbook_disabled        1.95 M        0.51 μs  ±8095.78%        0.39 μs        0.72 μs
+logger_enabled         0.150 M        6.66 μs   ±274.98%        4.99 μs       23.33 μs
+logbook_enabled        0.122 M        8.20 μs   ±210.31%        6.54 μs       24.54 μs
+
+Comparison: 
+logger_disabled         5.88 M
+logbook_disabled        1.95 M - 3.02x slower +0.34 μs
+logger_enabled         0.150 M - 39.18x slower +6.49 μs
+logbook_enabled        0.122 M - 48.21x slower +8.03 μs
+
+Memory usage statistics:
+
+Name                     average  deviation         median         99th %
+logger_disabled        0.0234 KB     ±0.00%      0.0234 KB      0.0234 KB
+logbook_disabled        0.164 KB     ±0.00%       0.164 KB       0.164 KB
+logger_enabled           3.01 KB     ±0.01%        3.01 KB        3.01 KB
+logbook_enabled          2.92 KB     ±0.00%        2.92 KB        2.92 KB
+
+Comparison: 
+logger_disabled        0.0234 KB
+logbook_disabled        0.164 KB - 7.00x memory usage +0.141 KB
+logger_enabled           3.01 KB - 128.33x memory usage +2.98 KB
+logbook_enabled          2.92 KB - 124.67x memory usage +2.90 KB
