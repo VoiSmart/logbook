@@ -30,6 +30,7 @@ defmodule Logbook.MixProject do
   defp deps do
     [
       # development stuff
+      {:benchee, "~> 1.0", only: :dev},
       {:stream_data, "~> 0.5", only: :test},
       {:credo, "~> 1.5", only: [:dev, :test]},
       {:dialyxir, "~> 1.1.0", only: [:dev, :test], runtime: false},
