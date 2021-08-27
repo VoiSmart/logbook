@@ -2,8 +2,6 @@ defmodule Logbook.LogTags do
   @moduledoc false
   use Agent
 
-  @levels [:info, :warn, :error, :debug, :none]
-
   @doc false
   def start_link(args) do
     Agent.start_link(__MODULE__, :start_link_impl, [args], name: __MODULE__)
@@ -15,7 +13,7 @@ defmodule Logbook.LogTags do
   end
 
   @doc false
-  def set_level(tags, level) when is_list(tags) and level in @levels do
+  def set_level(tags, level) when is_list(tags) do
     Agent.update(__MODULE__, __MODULE__, :set_level_impl, [tags, level])
   end
 
@@ -25,7 +23,7 @@ defmodule Logbook.LogTags do
   end
 
   @doc false
-  def enabled?(tags, level) when is_list(tags) and level in @levels do
+  def enabled?(tags, level) do
     cur_levels = Agent.get_and_update(__MODULE__, __MODULE__, :enabled_impl, [tags])
 
     cur_levels
@@ -39,7 +37,7 @@ defmodule Logbook.LogTags do
   end
 
   @doc false
-  def module_enabled?(module, level) when is_atom(module) and level in @levels do
+  def module_enabled?(module, level) do
     cur_level = Agent.get_and_update(__MODULE__, __MODULE__, :module_enabled_impl, [module])
 
     case compare_levels(level, cur_level) do
@@ -99,7 +97,10 @@ defmodule Logbook.LogTags do
   end
 
   defp default_level do
-    Application.get_env(:logbook, :default_tag_level, :warn)
+    case Application.get_env(:logbook, :default_tag_level, :warning) do
+      :warn -> :warning
+      v -> v
+    end
   end
 
   defp default_module_level do

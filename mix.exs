@@ -5,8 +5,8 @@ defmodule Logbook.MixProject do
   def project do
     [
       app: :logbook,
-      version: "1.0.0",
-      elixir: "~> 1.9",
+      version: "2.0.0",
+      elixir: "~> 1.11",
       elixirc_options: [warnings_as_errors: true],
       start_permanent: Mix.env() == :prod,
       deps: deps(),

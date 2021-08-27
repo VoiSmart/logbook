@@ -1,6 +1,6 @@
 defmodule TagsTest do
   @moduledoc false
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Logbook.Tags
 
