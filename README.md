@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/VoiSmart/logbook.svg)](https://travis-ci.org/VoiSmart/logbook) [![Coverage Status](https://coveralls.io/repos/github/VoiSmart/logbook/badge.svg?branch=develop)](https://coveralls.io/github/VoiSmart/logbook?branch=develop)
+[![.github/workflows/ci.yml](https://github.com/VoiSmart/logbook/actions/workflows/ci.yml/badge.svg)](https://github.com/VoiSmart/logbook/actions/workflows/ci.yml)
 
 # Logbook
 
