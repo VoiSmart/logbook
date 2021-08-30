@@ -36,4 +36,4 @@ Copyright 2020 Matteo Brancaleoni and VoiSmart S.R.L.
   See the License for the specific language governing permissions and
   limitations under the License.
 
-[documentation]: https://hexdocs.pm/webhooks_emitter
+[documentation]: https://hexdocs.pm/logbook
