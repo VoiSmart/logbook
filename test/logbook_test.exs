@@ -1,6 +1,7 @@
 defmodule LogbookTest do
   @moduledoc false
   use ExUnit.Case
+  doctest Logbook
 
   import ExUnit.CaptureLog
 

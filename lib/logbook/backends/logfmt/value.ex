@@ -1,4 +1,6 @@
 defprotocol Logbook.Backends.Logfmt.Value do
+  @moduledoc false
+
   @spec encode(value :: term) :: String.t()
   def encode(value)
 end

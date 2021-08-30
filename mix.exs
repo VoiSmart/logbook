@@ -34,7 +34,8 @@ defmodule Logbook.MixProject do
       {:stream_data, "~> 0.5", only: :test},
       {:credo, "~> 1.5", only: [:dev, :test]},
       {:dialyxir, "~> 1.1.0", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.14", only: :test}
+      {:excoveralls, "~> 0.14", only: :test},
+      {:ex_doc, "~> 0.25", only: :dev}
     ]
   end
 end

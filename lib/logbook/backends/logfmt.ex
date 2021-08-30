@@ -8,15 +8,21 @@ defmodule Logbook.Backends.Logfmt do
 
   This backend cannot be configured, all metadata is always logged, along
   with additional fields.
+
+  Here is an example of how to configure the `Logfmt` backend in a `config/config.exs` file:
+
+      # Configures Elixir's Logger
+      config :logger,
+        backends: [
+          :console,
+          {Logbook.Backends.Logfmt, :log_fmt_log}
+        ]
+
+      # Log formar file log
+      config :logger, :log_fmt_log, path: "/var/log/somefile.log"
+
   """
   @behaviour :gen_event
-
-  @type path :: String.t()
-  @type use_colors :: boolean()
-  @type file :: :file.io_device()
-  @type inode :: File.Stat.t()
-  @type level :: Logger.level()
-  @type metadata :: [atom]
 
   alias Logbook.Backends.Logfmt.Encoder
 
@@ -29,11 +35,12 @@ defmodule Logbook.Backends.Logfmt do
             metadata: nil,
             metadata_filter: nil
 
-  @spec init({__MODULE__, atom}) :: {:ok, %__MODULE__{}}
+  @impl true
   def init({__MODULE__, name}) do
     {:ok, configure(name, [])}
   end
 
+  @impl true
   def handle_call({:configure, opts}, %{name: name} = state) do
     {:ok, :ok, configure(name, opts, state)}
   end
@@ -42,6 +49,7 @@ defmodule Logbook.Backends.Logfmt do
     {:ok, {:ok, path}, state}
   end
 
+  @impl true
   def handle_event({_level, gl, _event}, state) when node(gl) != node() do
     {:ok, state}
   end
@@ -63,6 +71,7 @@ defmodule Logbook.Backends.Logfmt do
     {:ok, state}
   end
 
+  @impl true
   def handle_info({:DOWN, ref, _, pid, reason}, %{ref: ref}) do
     raise "device #{inspect(pid)} exited: " <> Exception.format_exit(reason)
   end
@@ -71,6 +80,7 @@ defmodule Logbook.Backends.Logfmt do
     {:ok, state}
   end
 
+  @impl true
   def terminate(_reason, %{io_device: nil}) do
     :ok
   end
@@ -80,6 +90,7 @@ defmodule Logbook.Backends.Logfmt do
     :ok
   end
 
+  @impl true
   def code_change(_old_vsn, state, _extra) do
     {:ok, state}
   end

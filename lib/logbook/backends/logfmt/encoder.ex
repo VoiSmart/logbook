@@ -1,10 +1,9 @@
 defmodule Logbook.Backends.Logfmt.Encoder do
-  @moduledoc """
-  Encode keyword lists to a single string.
+  @moduledoc false
 
-  Inspired by https://hex.pm/packages/logfmt, refactored to fit logfmt file
-  logger backend needs.
-  """
+  # Encode keyword lists to a single string.
+  # Inspired by https://hex.pm/packages/logfmt, refactored to fit logfmt file
+  # logger backend needs.
 
   alias Logbook.Backends.Logfmt.Value
 
