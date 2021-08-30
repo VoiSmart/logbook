@@ -7,7 +7,7 @@ defmodule Logbook.MixProject do
       app: :logbook,
       docs: docs(),
       package: package(),
-      description: "Categorize your logs with tags and log only the really needed ones.",
+      description: "A tag based Logger wrapper",
       source_url: "https://github.com/VoiSmart/logbook",
       homepage_url: "https://github.com/VoiSmart/logbook",
       version: "2.0.0",
