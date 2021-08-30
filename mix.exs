@@ -5,6 +5,11 @@ defmodule Logbook.MixProject do
   def project do
     [
       app: :logbook,
+      docs: docs(),
+      package: package(),
+      description: "Categorize your logs with tags and log only the really needed ones.",
+      source_url: "https://github.com/VoiSmart/logbook",
+      homepage_url: "https://github.com/VoiSmart/logbook",
       version: "2.0.0",
       elixir: "~> 1.11",
       elixirc_options: [warnings_as_errors: true],
@@ -27,9 +32,22 @@ defmodule Logbook.MixProject do
     ]
   end
 
+  defp package do
+    [
+      mantainers: ["Matteo Brancaleoni"],
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/VoiSmart/logbook"}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "Logbook"
+    ]
+  end
+
   defp deps do
     [
-      # development stuff
       {:benchee, "~> 1.0", only: :dev},
       {:stream_data, "~> 0.5", only: :test},
       {:credo, "~> 1.5", only: [:dev, :test]},
