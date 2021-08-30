@@ -18,12 +18,12 @@ defmodule Logbook do
       require Logbook
 
       def delete_user(user) do
-        Logbook.info([:audit, :user], "Deleting user #{inspect(user)})
+        Logbook.info([:audit, :user], "Deleting user #{inspect(user)}")
         # ...
       end
 
       def delete_domain(domain) do
-        Logbook.info([:audit, :domain], "Deleting domain #{inspect(domain)})
+        Logbook.info([:audit, :domain], "Deleting domain #{inspect(domain)}")
         # ...
       end
 
@@ -57,12 +57,12 @@ defmodule Logbook do
         require Logbook
 
         def delete_user(user) do
-          Logbook.info([:audit, :user], "Deleting user #{inspect(user)})
+          Logbook.info([:audit, :user], "Deleting user #{inspect(user)}")
           # ...
         end
 
         def delete_domain(domain) do
-          Logbook.info([:audit, :domain], "Deleting domain #{inspect(domain)})
+          Logbook.info([:audit, :domain], "Deleting domain #{inspect(domain)}")
           # ...
         end
       end
