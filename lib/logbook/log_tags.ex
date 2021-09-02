@@ -29,29 +29,25 @@ defmodule Logbook.LogTags do
   end
 
   @doc false
-  def enabled?(tags, level) do
-    cur_levels =
-      tags
-      |> Enum.map(fn tag ->
-        case :ets.lookup(@table_name, tag) do
-          [{_tag, level}] ->
-            level
+  def enabled?(tag, level) when is_atom(tag) do
+    cur_level = lookup_tag_maybe_update(tag)
 
-          [] ->
-            level = default_level()
-            GenServer.cast(__MODULE__, {:set_level, [tag], level})
-            level
-        end
-      end)
+    case compare_levels(level, cur_level) do
+      :lt -> false
+      _ -> true
+    end
+  end
+
+  def enabled?(tags, level) when is_list(tags) do
+    cur_levels = tags |> Enum.map(&lookup_tag_maybe_update/1)
 
     cur_levels
-    |> Enum.map(fn cur_level ->
+    |> Enum.reduce_while(false, fn cur_level, _ ->
       case compare_levels(level, cur_level) do
-        :lt -> false
-        _ -> true
+        :lt -> {:cont, false}
+        _ -> {:halt, true}
       end
     end)
-    |> Enum.any?()
   end
 
   def module_enabled?(nil, _level) do
@@ -149,5 +145,17 @@ defmodule Logbook.LogTags do
 
   defp compare_levels(left, right) do
     Logger.compare_levels(left, right)
+  end
+
+  defp lookup_tag_maybe_update(tag) do
+    case :ets.lookup(@table_name, tag) do
+      [{_tag, level}] ->
+        level
+
+      [] ->
+        level = default_level()
+        GenServer.cast(__MODULE__, {:set_level, [tag], level})
+        level
+    end
   end
 end

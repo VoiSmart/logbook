@@ -144,12 +144,8 @@ defmodule Logbook do
     enabled?(tag_or_tags, :warning)
   end
 
-  def enabled?(tag, level) when is_atom(tag) and level in @logbook_levels do
-    enabled?([tag], level)
-  end
-
-  def enabled?(tags, level) when is_list(tags) and level in @logbook_levels do
-    LogTags.enabled?(tags, level)
+  def enabled?(tag_or_tags, level) when level in @logbook_levels do
+    LogTags.enabled?(tag_or_tags, level)
   end
 
   @doc """
@@ -204,7 +200,7 @@ defmodule Logbook do
 
   defp do_log(level, tag_or_tags, chardata_or_fun, metadata, caller) do
     logger = macro_logger(level)
-    {module, tags} = macro_preprocess(tag_or_tags, caller)
+    {module, tags, tag_or_tags} = macro_preprocess(tag_or_tags, caller)
 
     quote do
       level = unquote(level)
@@ -214,7 +210,8 @@ defmodule Logbook do
       md = Keyword.put(unquote(metadata), :tags, %Logbook.Tags{tags: unquote(tags)})
 
       should_log =
-        Logbook.enabled?(unquote(tags), level) || Logbook.module_enabled?(unquote(module), level)
+        Logbook.enabled?(unquote(tag_or_tags), level) ||
+          Logbook.module_enabled?(unquote(module), level)
 
       case should_log do
         false ->
@@ -226,21 +223,17 @@ defmodule Logbook do
     end
   end
 
-  defp macro_preprocess(tag_or_tags, caller) do
+  defp macro_preprocess(tag, caller) when is_atom(tag) do
     %{module: module, function: _fun, file: _file, line: _line} = caller
 
-    tags =
-      case is_list(tag_or_tags) do
-        true -> tag_or_tags
-        false -> [tag_or_tags]
-      end
-
-    macro_tags_must_be_atoms(tags)
-
-    {module, tags}
+    {module, [tag], tag}
   end
 
-  defp macro_tags_must_be_atoms(tags) do
+  defp macro_preprocess(tags, caller) when is_list(tags) do
+    %{module: module, function: _fun, file: _file, line: _line} = caller
+
     Enum.each(tags, fn tag when is_atom(tag) -> tag end)
+
+    {module, tags, tags}
   end
 end
