@@ -10,7 +10,7 @@ defmodule Logbook.MixProject do
       description: "A tag based Logger wrapper",
       source_url: "https://github.com/VoiSmart/logbook",
       homepage_url: "https://github.com/VoiSmart/logbook",
-      version: "2.0.0",
+      version: "2.0.1",
       elixir: "~> 1.11",
       elixirc_options: [warnings_as_errors: true],
       start_permanent: Mix.env() == :prod,
