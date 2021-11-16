@@ -153,6 +153,33 @@ defmodule LogbookTest do
     assert log =~ "logbook/test/logbook_test.exs"
   end
 
+  test "can compile with a module attribute as tags" do
+    ast =
+      quote do
+        defmodule ShouldCompile do
+          @moduledoc false
+          @log_tag :compile_test
+          @log_tags [:should_compile, :compile_test]
+
+          require Logbook
+
+          def hello do
+            Logbook.debug(@log_tag, "Hello there!")
+          end
+
+          def here do
+            Logbook.debug(@log_tags, "Hello here!")
+          end
+        end
+      end
+
+    assert Code.eval_quoted(ast, [], __ENV__)
+
+    :ok = Logbook.set_level(:compile_test, :debug)
+    log = capture_log(fn -> apply(__MODULE__.ShouldCompile, :hello, []) end)
+    assert log =~ "Hello there"
+  end
+
   describe "set_level/2" do
     test "sets a single tag level" do
       Logbook.set_level(:a_single_cat, :error)

@@ -236,4 +236,10 @@ defmodule Logbook do
 
     {module, tags, tags}
   end
+
+  defp macro_preprocess({:@, _, _} = module_attr, caller) do
+    module_attr
+    |> Macro.expand_once(caller)
+    |> macro_preprocess(caller)
+  end
 end
