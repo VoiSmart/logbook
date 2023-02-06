@@ -40,8 +40,11 @@ defmodule Logbook.Backends.Logfmt.EncoderTest do
     end
   end
 
-  property "Can encode any keyword list of map" do
-    check all(keywords <- keyword_of(map(StreamData.integer(), &Integer.to_string/1))) do
+  property "Can encode any keyword list of maps" do
+    check all(
+            keywords <- keyword_of(map_of(StreamData.atom(:alphanumeric), term())),
+            max_runs: 25
+          ) do
       assert log_msg = Encoder.encode(keywords)
       assert is_binary(log_msg)
     end
