@@ -72,17 +72,18 @@ defmodule Logbook.Backends.Logfmt.EncoderTest do
     end
   end
 
-  property "Can encode any keyword list of port" do
-    check all(keywords <- keyword_of(constant(fn x -> x end))) do
+  property "Can encode any keyword list of Ports" do
+    check all(
+            keywords <-
+              keyword_of(
+                constant(fn _ ->
+                  {:ok, port} = :gen_tcp.listen(0, [])
+                  port
+                end)
+              )
+          ) do
       assert log_msg = Encoder.encode(keywords)
       assert is_binary(log_msg)
     end
-  end
-
-  test "can encode a keyword with a Port" do
-    {:ok, port} = :gen_tcp.listen(0, [])
-    kws = [myport: port]
-    assert log_msg = Encoder.encode(kws)
-    assert is_binary(log_msg)
   end
 end
