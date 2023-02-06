@@ -232,7 +232,7 @@ defmodule Logbook.Backends.Logfmt do
         function: md |> Keyword.get(:function),
         file: md |> Keyword.get(:file),
         line: md |> Keyword.get(:line),
-        vm_pid: System.get_pid(),
+        vm_pid: System.pid(),
         host: hostname()
       ]
       |> Enum.concat(md)

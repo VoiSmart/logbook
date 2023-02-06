@@ -211,7 +211,7 @@ defmodule Logbook.Backends.LogfmtTest do
   defp has_open({:unix, _}, path) do
     case System.cmd("lsof", [path]) do
       {output, 0} ->
-        output =~ System.get_pid()
+        output =~ System.pid()
 
       _ ->
         false
