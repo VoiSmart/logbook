@@ -26,14 +26,14 @@ defmodule Logbook.Backends.Logfmt.EncoderTest do
     end
   end
 
-  property "Can encode any keyword list of iolist" do
+  property "Can encode any keyword list of iolists" do
     check all(keywords <- keyword_of(iolist())) do
       assert log_msg = Encoder.encode(keywords)
       assert is_binary(log_msg)
     end
   end
 
-  property "Can encode any keyword list of tuple" do
+  property "Can encode any keyword list of tuples" do
     check all(keywords <- keyword_of(tuple({StreamData.integer(), StreamData.binary()}))) do
       assert log_msg = Encoder.encode(keywords)
       assert is_binary(log_msg)
