@@ -48,12 +48,12 @@ defmodule Logbook.MixProject do
 
   defp deps do
     [
-      {:benchee, "~> 1.0", only: :dev},
+      {:benchee, "~> 1.1", only: :dev},
       {:stream_data, "~> 0.5", only: :test},
-      {:credo, "~> 1.5", only: [:dev, :test]},
-      {:dialyxir, "~> 1.1.0", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.14", only: :test},
-      {:ex_doc, "~> 0.25", only: :dev}
+      {:credo, "~> 1.6", only: [:dev, :test]},
+      {:dialyxir, "~> 1.2", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.15", only: :test},
+      {:ex_doc, "~> 0.29", only: :dev}
     ]
   end
 end
