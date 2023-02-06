@@ -50,6 +50,21 @@ defmodule Logbook.Backends.Logfmt.EncoderTest do
     end
   end
 
+  property "Can encode any keyword list of structs" do
+    check all(
+            keywords <- keyword_of(map_of(StreamData.atom(:alphanumeric), term())),
+            max_runs: 2
+          ) do
+      keywords =
+        Enum.map(keywords, fn {k, map} ->
+          {k, Map.put(map, :__struct__, __MODULE__)}
+        end)
+
+      assert log_msg = Encoder.encode(keywords)
+      assert is_binary(log_msg)
+    end
+  end
+
   property "Can encode any keyword list of functions" do
     check all(keywords <- keyword_of(constant(fn x -> x end))) do
       assert log_msg = Encoder.encode(keywords)

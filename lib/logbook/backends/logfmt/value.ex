@@ -1,6 +1,8 @@
 defprotocol Logbook.Backends.Logfmt.Value do
   @moduledoc false
 
+  @fallback_to_any true
+
   @spec encode(value :: term) :: String.t()
   def encode(value)
 end
@@ -67,4 +69,8 @@ end
 
 defimpl Logbook.Backends.Logfmt.Value, for: Tuple do
   def encode(tuple), do: inspect(tuple)
+end
+
+defimpl Logbook.Backends.Logfmt.Value, for: Any do
+  def encode(struct), do: inspect(struct)
 end
