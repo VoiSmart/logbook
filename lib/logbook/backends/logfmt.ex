@@ -263,7 +263,7 @@ defmodule Logbook.Backends.Logfmt do
 
   defp get_color(:debug), do: :cyan
   defp get_color(:info), do: :normal
-  defp get_color(:warn), do: :yellow
+  defp get_color(:warning), do: :yellow
   defp get_color(:error), do: :red
   defp get_color(_), do: :normal
 end

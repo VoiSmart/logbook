@@ -62,7 +62,7 @@ end
 
 defimpl Logbook.Backends.Logfmt.Value, for: Reference do
   def encode(ref) when is_reference(ref) do
-    '#Ref' ++ rest = ref |> :erlang.ref_to_list()
+    ~c"#Ref" ++ rest = ref |> :erlang.ref_to_list()
     rest |> Logbook.Backends.Logfmt.Value.encode()
   end
 end

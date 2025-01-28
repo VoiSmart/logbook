@@ -10,8 +10,8 @@ defmodule Logbook.MixProject do
       description: "A tag based Logger wrapper",
       source_url: "https://github.com/VoiSmart/logbook",
       homepage_url: "https://github.com/VoiSmart/logbook",
-      version: "2.0.3",
-      elixir: "~> 1.11",
+      version: "3.0.0",
+      elixir: "~> 1.17",
       elixirc_options: [warnings_as_errors: true],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -48,12 +48,12 @@ defmodule Logbook.MixProject do
 
   defp deps do
     [
-      {:benchee, "~> 1.1", only: :dev},
-      {:stream_data, "~> 0.5", only: :test},
-      {:credo, "~> 1.6", only: [:dev, :test]},
-      {:dialyxir, "~> 1.2", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.15", only: :test},
-      {:ex_doc, "~> 0.29", only: :dev}
+      {:benchee, "~> 1.3", only: :dev},
+      {:stream_data, "~> 1.1", only: :test},
+      {:credo, "~> 1.7", only: [:dev, :test]},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: :test},
+      {:ex_doc, "~> 0.36", only: :dev}
     ]
   end
 end

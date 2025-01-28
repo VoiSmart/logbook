@@ -48,10 +48,10 @@ defmodule LogbookTest do
     end
 
     :ok = Logbook.set_level(:somefun, :warning)
-    assert capture_log(fn -> Logbook.warn(:somefun, fun) end) =~ "foo"
+    assert capture_log(fn -> Logbook.warning(:somefun, fun) end) =~ "foo"
     assert_receive(:hello)
 
-    :ok = Logbook.set_level(:somefun, :warn)
+    :ok = Logbook.set_level(:somefun, :warning)
     assert capture_log(fn -> Logbook.warning(:somefun, fun) end) =~ "foo"
     assert_receive(:hello)
   end
@@ -64,8 +64,8 @@ defmodule LogbookTest do
       "foo"
     end
 
-    :ok = Logbook.set_level(:somefun, :warn)
-    assert capture_log(fn -> Logbook.warn(:somefun, fun) end) =~ "foo"
+    :ok = Logbook.set_level(:somefun, :warning)
+    assert capture_log(fn -> Logbook.warning(:somefun, fun) end) =~ "foo"
 
     assert_receive(:hello)
   end
@@ -109,7 +109,7 @@ defmodule LogbookTest do
     refute capture_log(fn -> Logbook.debug(:foocat, "foo") end) =~ "foo"
     refute capture_log(fn -> Logbook.info(:foocat, "foo") end) =~ "foo"
 
-    assert capture_log(fn -> Logbook.warn(:foocat, "foo") end) =~ "foo"
+    assert capture_log(fn -> Logbook.warning(:foocat, "foo") end) =~ "foo"
     assert capture_log(fn -> Logbook.warning(:foocat, "foo") end) =~ "foo"
     assert capture_log(fn -> Logbook.error(:foocat, "foo") end) =~ "foo"
   end
@@ -131,7 +131,7 @@ defmodule LogbookTest do
 
     assert capture_log(fn -> Logbook.debug(:cat1, "foo") end) =~ "foo"
 
-    refute capture_log(fn -> Logbook.warn(:cat2, "foo") end) =~ "foo"
+    refute capture_log(fn -> Logbook.warning(:cat2, "foo") end) =~ "foo"
     refute capture_log(fn -> Logbook.warning(:cat2, "foo") end) =~ "foo"
     refute capture_log(fn -> Logbook.debug(:cat2, "foo") end) =~ "foo"
   end
@@ -147,7 +147,13 @@ defmodule LogbookTest do
     end
 
     :ok = Logbook.set_level(:mfa, :debug)
-    log = capture_log([format: "$metadata", metadata: :all], &TestLogbookMfa.hello/0)
+
+    log =
+      capture_log(
+        [format: "$metadata", metadata: [:mfa, :module, :file]],
+        &TestLogbookMfa.hello/0
+      )
+
     assert log =~ "mfa=LogbookTest.TestLogbookMfa.hello/0"
     assert log =~ "module=LogbookTest.TestLogbookMfa"
     assert log =~ "logbook/test/logbook_test.exs"
@@ -269,7 +275,7 @@ defmodule LogbookTest do
     end
 
     test "log level lower than configured" do
-      :ok = Logbook.set_level(:infocat, :warn)
+      :ok = Logbook.set_level(:infocat, :warning)
 
       refute capture_log(fn -> Logbook.info(:infocat, "foo") end) =~ "foo"
     end
@@ -295,7 +301,7 @@ defmodule LogbookTest do
     end
 
     test "log level lower than configured" do
-      :ok = Logbook.set_level(:infocat, :warn)
+      :ok = Logbook.set_level(:infocat, :warning)
 
       refute capture_log(fn -> Logbook.notice(:noticecat, "foo") end) =~ "foo"
     end
@@ -315,33 +321,7 @@ defmodule LogbookTest do
 
   describe "warn/2" do
     test "log level enabled for tag" do
-      :ok = Logbook.set_level(:warningcat, :warn)
-
-      assert capture_log(fn -> Logbook.warn(:warningcat, "foo") end) =~ "foo"
-    end
-
-    test "log level lower than configured for tag" do
-      :ok = Logbook.set_level(:warningcat, :error)
-
-      refute capture_log(fn -> Logbook.warn(:warningcat, "foo") end) =~ "foo"
-    end
-
-    test "log disabled for tag" do
-      :ok = Logbook.set_level(:warningcat, :none)
-
-      refute capture_log(fn -> Logbook.warn(:warningcat, "foo") end) =~ "foo"
-    end
-
-    test "module level log" do
-      :ok = Logbook.set_level(__MODULE__, :warn)
-
-      assert capture_log(fn -> Logbook.warn(:warningcat, "foo") end) =~ "foo"
-    end
-  end
-
-  describe "warning/2" do
-    test "log level enabled for tag" do
-      :ok = Logbook.set_level(:warningcat, :warn)
+      :ok = Logbook.set_level(:warningcat, :warning)
 
       assert capture_log(fn -> Logbook.warning(:warningcat, "foo") end) =~ "foo"
     end
@@ -359,7 +339,33 @@ defmodule LogbookTest do
     end
 
     test "module level log" do
-      :ok = Logbook.set_level(__MODULE__, :warn)
+      :ok = Logbook.set_level(__MODULE__, :warning)
+
+      assert capture_log(fn -> Logbook.warning(:warningcat, "foo") end) =~ "foo"
+    end
+  end
+
+  describe "warning/2" do
+    test "log level enabled for tag" do
+      :ok = Logbook.set_level(:warningcat, :warning)
+
+      assert capture_log(fn -> Logbook.warning(:warningcat, "foo") end) =~ "foo"
+    end
+
+    test "log level lower than configured for tag" do
+      :ok = Logbook.set_level(:warningcat, :error)
+
+      refute capture_log(fn -> Logbook.warning(:warningcat, "foo") end) =~ "foo"
+    end
+
+    test "log disabled for tag" do
+      :ok = Logbook.set_level(:warningcat, :none)
+
+      refute capture_log(fn -> Logbook.warning(:warningcat, "foo") end) =~ "foo"
+    end
+
+    test "module level log" do
+      :ok = Logbook.set_level(__MODULE__, :warning)
 
       assert capture_log(fn -> Logbook.warning(:warningcat, "foo") end) =~ "foo"
     end

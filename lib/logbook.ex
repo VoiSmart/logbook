@@ -101,7 +101,6 @@ defmodule Logbook do
           | :alert
           | :critical
           | :error
-          | :warn
           | :warning
           | :notice
           | :info
@@ -113,11 +112,6 @@ defmodule Logbook do
   @doc """
   Sets log level for the specific tag or list of tags.
   """
-  @spec set_level(tag_or_tags, level) :: :ok
-  def set_level(tag_or_tags, :warn) do
-    set_level(tag_or_tags, :warning)
-  end
-
   def set_level(tag, level) when is_atom(tag) and level in @logbook_levels do
     LogTags.set_level([tag], level)
   end
@@ -139,11 +133,6 @@ defmodule Logbook do
   If a list of tags is passed, returns `true` if any of the tag log level is equal or lower than
   the passed one.
   """
-  @spec enabled?(tag_or_tags, level) :: boolean
-  def enabled?(tag_or_tags, :warn) do
-    enabled?(tag_or_tags, :warning)
-  end
-
   def enabled?(tag_or_tags, level) when level in @logbook_levels do
     LogTags.enabled?(tag_or_tags, level)
   end
@@ -152,11 +141,6 @@ defmodule Logbook do
   Like `enabled?/2` checks if the given module has a configured log level equal
   or lower than the given level.
   """
-  @spec module_enabled?(module(), level) :: boolean
-  def module_enabled?(module, :warn) when is_atom(module) do
-    module_enabled?(module, :warning)
-  end
-
   def module_enabled?(module, level) when is_atom(module) and level in @logbook_levels do
     LogTags.module_enabled?(module, level)
   end
@@ -191,11 +175,6 @@ defmodule Logbook do
         &(unquote(Logger).unquote(level) / unquote(2))
       end
     end
-  end
-
-  @deprecated "Use warning/2 instead"
-  defmacro warn(tag_or_tags, chardata_or_fun, metadata \\ []) do
-    do_log(:warning, tag_or_tags, chardata_or_fun, metadata, __CALLER__)
   end
 
   defp do_log(level, tag_or_tags, chardata_or_fun, metadata, caller) do
