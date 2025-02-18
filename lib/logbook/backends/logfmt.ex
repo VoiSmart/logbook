@@ -58,6 +58,9 @@ defmodule Logbook.Backends.Logfmt do
         {level, _gl, {Logger, msg, ts, md}},
         %{level: min_level, metadata_filter: metadata_filter} = state
       ) do
+    level = maybe_fixup_warn(level)
+    min_level = maybe_fixup_warn(min_level)
+
     valid_level? = is_nil(min_level) or Logger.compare_levels(level, min_level) != :lt
 
     if valid_level? and metadata_matches?(md, metadata_filter) do
@@ -266,4 +269,7 @@ defmodule Logbook.Backends.Logfmt do
   defp get_color(:warning), do: :yellow
   defp get_color(:error), do: :red
   defp get_color(_), do: :normal
+
+  defp maybe_fixup_warn(:warn), do: :warning
+  defp maybe_fixup_warn(level), do: level
 end
