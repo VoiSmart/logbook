@@ -1,9 +1,9 @@
-defmodule Logbook.Backends.Logfmt.EncoderTest do
+defmodule Logbook.Formatters.Logfmt.EncoderTest do
   @moduledoc false
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  alias Logbook.Backends.Logfmt.Encoder
+  alias Logbook.Formatters.Logfmt.Encoder
 
   property "Can encode any keyword list" do
     check all(keywords <- keyword_of(term())) do

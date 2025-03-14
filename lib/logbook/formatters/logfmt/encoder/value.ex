@@ -1,0 +1,60 @@
+defprotocol Logbook.Formatters.Logfmt.Encoder.Value do
+  @moduledoc false
+
+  @fallback_to_any true
+
+  @spec encode(value :: term) :: String.t()
+  def encode(value)
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Logbook.Tags do
+  def encode(t) do
+    Logbook.Tags.to_string(t)
+  end
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Atom do
+  def encode(atom) do
+    case Atom.to_string(atom) do
+      "Elixir." <> rest -> rest
+      binary -> binary
+    end
+  end
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: BitString do
+  def encode(str), do: str
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Float do
+  def encode(float), do: Float.to_string(float)
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Integer do
+  def encode(int), do: Integer.to_string(int)
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: PID do
+  def encode(pid) when is_pid(pid) do
+    pid |> :erlang.pid_to_list() |> Logbook.Formatters.Logfmt.Encoder.Value.encode()
+  end
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Port do
+  def encode(port), do: inspect(port)
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Reference do
+  def encode(ref) when is_reference(ref) do
+    ~c"#Ref" ++ rest = ref |> :erlang.ref_to_list()
+    rest |> Logbook.Formatters.Logfmt.Encoder.Value.encode()
+  end
+end
+
+defimpl Logbook.Formatters.Logfmt.Encoder.Value, for: Any do
+  def encode(any) do
+    to_string(any)
+  rescue
+    _ -> inspect(any)
+  end
+end

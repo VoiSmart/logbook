@@ -24,7 +24,7 @@ defmodule Logbook.Backends.Logfmt do
   """
   @behaviour :gen_event
 
-  alias Logbook.Backends.Logfmt.Encoder
+  alias Logbook.Formatters.Logfmt
 
   defstruct name: nil,
             path: nil,
@@ -190,11 +190,16 @@ defmodule Logbook.Backends.Logfmt do
          msg,
          ts,
          md,
-         %__MODULE__{path: path, io_device: io_device, inode: inode} = state
+         %__MODULE__{path: path, io_device: io_device, inode: inode, use_colors: use_colors} =
+           state
        )
        when is_binary(path) do
     if !is_nil(inode) and inode == get_inode(path) do
-      output = format_entry(level, msg, ts, md, state)
+      output =
+        Logfmt.format(level, msg, ts, md)
+        |> trim_newline()
+        |> colorize(level, use_colors)
+        |> add_newline()
 
       try do
         :ok = IO.write(io_device, output)
@@ -218,45 +223,6 @@ defmodule Logbook.Backends.Logfmt do
     end
   end
 
-  defp format_entry(level, msg, ts, md, %{use_colors: use_colors}) do
-    alias Logger.Formatter
-
-    {date, time} = ts
-
-    log_entry =
-      [
-        date: date |> Formatter.format_date(),
-        time: time |> Formatter.format_time(),
-        level: level,
-        msg: msg |> Formatter.prune() |> highlight(use_colors),
-        tags: md |> get_tags(),
-        pid: md |> Keyword.get(:pid),
-        module: md |> Keyword.get(:module),
-        function: md |> Keyword.get(:function),
-        file: md |> Keyword.get(:file),
-        line: md |> Keyword.get(:line),
-        vm_pid: System.pid(),
-        host: hostname()
-      ]
-      |> Enum.concat(md)
-      |> Enum.uniq_by(fn {k, _v} -> k end)
-
-    [colorize(Encoder.encode(log_entry), level, use_colors) | "\n"]
-  end
-
-  defp hostname do
-    {:ok, hostname} = :inet.gethostname()
-    hostname
-  end
-
-  defp get_tags(md) do
-    Keyword.get(md, :tags, %Logbook.Tags{tags: [:default]})
-  end
-
-  defp highlight(msg, true), do: [IO.ANSI.bright(), msg | IO.ANSI.normal()]
-
-  defp highlight(msg, false), do: msg
-
   defp colorize(msg, level, true) do
     color = get_color(level)
     [IO.ANSI.format_fragment(color, true), msg | IO.ANSI.reset()]
@@ -272,4 +238,12 @@ defmodule Logbook.Backends.Logfmt do
 
   defp maybe_fixup_warn(:warn), do: :warning
   defp maybe_fixup_warn(level), do: level
+
+  defp trim_newline([msg, ?\n]) do
+    msg
+  end
+
+  defp add_newline(log) do
+    [log, ?\n]
+  end
 end

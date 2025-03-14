@@ -55,7 +55,7 @@ defmodule Logbook.Backends.LogfmtTest do
     assert log_entry =~ "date="
     assert log_entry =~ "time="
     assert log_entry =~ "level=debug"
-    assert log_entry =~ ~r/msg=\".+oh my log.+\" /
+    assert log_entry =~ ~r/msg=\"oh my log\" /
     assert log_entry =~ "module=Logbook.Backends.LogfmtTest"
     assert log_entry =~ "function=\"test a log message contains default fields/1\""
     assert log_entry =~ "file="
@@ -187,7 +187,7 @@ defmodule Logbook.Backends.LogfmtTest do
     read_log()
     |> String.split("\n", trim: true)
     |> Enum.any?(fn line ->
-      line =~ ~r/#{field}=.+#{content}.+ /
+      line =~ ~r/#{field}=#{content} /
     end)
   end
 
