@@ -6,14 +6,7 @@ jobs:
     strategy:
       matrix:
         otp: ["26", "27"]
-        elixir: ["1.17.3", "1.18.2"]
-        exclude:
-          - otp: "22.3"
-            elixir: "1.14.3"
-          - otp: "25.2"
-            elixir: "1.11.4"
-          - otp: "25.2"
-            elixir: "1.12.3"
+        elixir: ["1.17.3", "1.18.3"]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
