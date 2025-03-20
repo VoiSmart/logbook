@@ -11,7 +11,7 @@ The package can be installed by adding `logbook` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:logbook, "~> 2.0"}
+    {:logbook, "~> 4.0"}
   ]
 end
 ```
